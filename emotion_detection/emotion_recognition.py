@@ -90,7 +90,6 @@ while True:
 
     dlib_detections = dlib_detector(gray_test_img, 0)
     detector.detect_emotions(test_img)
-    # print(detector.emotions)
 
     if len(dlib_detections) == 0:
         continue
@@ -166,29 +165,9 @@ ax1.plot(range(len(data_dict["data"]["avg_stress_timeline"])), data_dict["data"]
 ax1.set(xlabel=f"Session Duration ({capture_interval} seconds)", ylabel="Avg. Stress Levels")
 ax1.set_title(f"Stress Level Analysis Over Session Time (in {capture_interval} seconds)")
 
-
 ax2.plot(range(len(data_dict["development"]["stress_timeline"])), data_dict["development"]["stress_timeline"])
 ax2.set(xlabel="Session Duration (frames)", ylabel="Stress Levels")
 ax2.set_title("Stress Level Analysis Over Session Time (in Frames)")
 
 plt.tight_layout()
 plt.show()
-
-
-'''
-img = cv2.imread("apeviaPowerSupply.jpg")
-detector = FER(mtcnn=True)
-detector.detect_emotions(img)
-print(detector.emotions)
-image = cv2.rectangle(img,
-                      (detector.emotions[0]['box'][0], detector.emotions[0]['box'][1]),
-                      (detector.emotions[0]['box'][0]+detector.emotions[0]['box'][2], detector.emotions[0]['box'][1]+detector.emotions[0]['box'][3]),
-                      (254, 89, 194),
-                      2)
-font = cv2.FONT_HERSHEY_SIMPLEX
-cv2.putText(img, f'Detected: {[max(detector.emotions[0]["emotions"], key=detector.emotions[0]["emotions"].get)]}',
-            (detector.emotions[0]['box'][0], detector.emotions[0]['box'][1]-50), font, 1, (254, 89, 194), 2)
-
-cv2.imshow("Image", image)
-cv2.waitKey()
-'''
