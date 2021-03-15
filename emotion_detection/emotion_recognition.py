@@ -10,7 +10,7 @@ from datetime import datetime, date
 import matplotlib.pyplot as plt
 
 useIPCamera = input("Use IP camera? [Y/N]")
-if useIPCamera == "Y":
+if useIPCamera in ["Y", "y"]:
     cam_url = "http://jjraspi:9090/?action=stream"
 else:
     cam_url = 0
@@ -129,7 +129,9 @@ while True:
                         f"{emotion}: {detector.emotions[0]['emotions'][emotion]}",
                         (detector.emotions[0]['box'][0], detector.emotions[0]['box'][1] - i*15 - 25), font, 0.5, (254, 89, 194), 1)
             data_dict["development"][f"{emotion}_timeline"].append(int(detector.emotions[0]['emotions'][emotion] * 100))
-        data_dict["development"]["stress_timeline"].append(int(stress_value * 100))
+        data_dict["development"]["stress_timeline"].append(
+            int(((stress_value+detector.emotions[0]['emotions']['sad']+detector.emotions[0]['emotions']['angry']+detector.emotions[0]['emotions']['fear']+detector.emotions[0]['emotions']['disgust'])/5) * 100)
+        )
 
     resized_img = cv2.resize(test_img, (1000, 700))
     cv2.imshow('Facial emotion analysis ', resized_img)
@@ -139,11 +141,11 @@ while True:
 cv2.destroyAllWindows()
 cap.release()
 
-minutes_total = (current_frame / (frame_rate*capture_interval))
+intervals_total = (current_frame / (frame_rate*capture_interval))
 
 print(f"total frames: {total_frames}")
 print(f"total captured frames: {current_frame}")
-print(f"total captured minutes: {minutes_total}")
+print(f"total captured intervals: {intervals_total}")
 for i, item in enumerate(data_dict["development"]):
     print(f"total data points: {len(data_dict['development'][item])}")
 
@@ -161,8 +163,8 @@ with open('result.json', 'w') as json_file:
 
 fig, (ax1, ax2) = plt.subplots(2)
 ax1.plot(range(len(data_dict["data"]["avg_stress_timeline"])), data_dict["data"]["avg_stress_timeline"])
-ax1.set(xlabel="Session Duration (minutes)", ylabel="Avg. Stress Levels")
-ax1.set_title("Stress Level Analysis Over Session Time (in Minutes)")
+ax1.set(xlabel=f"Session Duration ({capture_interval} seconds)", ylabel="Avg. Stress Levels")
+ax1.set_title(f"Stress Level Analysis Over Session Time (in {capture_interval} seconds)")
 
 
 ax2.plot(range(len(data_dict["development"]["stress_timeline"])), data_dict["development"]["stress_timeline"])
