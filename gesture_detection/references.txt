@@ -1,0 +1,2 @@
+https://www.kaggle.com/anayantzinp/cnn-state-farm-distracted-driver-detection
+https://www.kaggle.com/c/state-farm-distracted-driver-detection/overview
