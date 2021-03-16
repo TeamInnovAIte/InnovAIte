@@ -18,6 +18,7 @@ elif input_setting == "2":
 else:
     vid_src = input("Enter the video file name to use (example: myvideo.avi): ")
 cap = cv2.VideoCapture(vid_src)
+font = cv2.FONT_HERSHEY_COMPLEX
 detector = FER(mtcnn=True)
 dlib_detector = dlib.get_frontal_face_detector()
 dlib_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
@@ -25,6 +26,8 @@ dlib_points = []
 current_frame = 0
 total_frames = 0
 frame_rate = 30
+main_color = (0, 255, 0)
+secondary_color = (255, 7, 58)
 capture_interval = 10  # Average values over 10 second intervals, at 30 fps
 data_dict = {
     "session_date": date.today().strftime("%d/%m/%Y"),
@@ -66,44 +69,61 @@ def eye_brow_distance(leye,reye):
     return distq
 
 def normalize_values(points,disp):
-    normalized_value = abs(disp - np.min(points))/abs(np.max(points) - np.min(points))
-    stress_value = np.exp(-(normalized_value))
+    try:
+        normalized_value = abs(disp - np.min(points))/abs(np.max(points) - np.min(points))
+    except ZeroDivisionError:
+        return 0
+    stress = np.exp(-normalized_value)
     # print(stress_value)
     if math.isnan(stress_value):
-        stress_value = 0
-    if stress_value>=75:
-        return stress_value,"High Stress"
-    else:
-        return stress_value,"low_stress"
+        stress = 0
+    return stress
+
 
 while True:
-    ret, test_img = cap.read()# captures frame and returns boolean value and captured image
+    ret, test_img = cap.read()  # captures frame and returns boolean value and captured image
     if not ret:
         continue
     current_frame += 1
     total_frames += 1
 
-    test_img = cv2.flip(test_img, 1)
+    """
+    if current_frame % 2 == 0:
+        resized_img = cv2.resize(test_img, (1000, 700))
+        cv2.imshow('Facial emotion analysis ', resized_img)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
+            break
+        continue
+    """
+
+    # test_img = cv2.flip(test_img, 1)
     test_img = cv2.resize(test_img, (1000, 700))
+    # test_img_dlib = cv2.resize(test_img, (500, 300))
     # test_img = imutils.resize(test_img, width=500, height=500)
-    (lBegin, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eyebrow"]
-    (rBegin, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eyebrow"]
-    (lLower, rUpper) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]
     gray_test_img = cv2.cvtColor(test_img, cv2.COLOR_BGR2GRAY)
 
-    dlib_detections = dlib_detector(gray_test_img, 0)
-    detector.detect_emotions(test_img)
-
-    if len(dlib_detections) == 0:
+    all_faces = dlib_detector(gray_test_img, 0)
+    if len(all_faces) == 0:
+        cv2.imshow('Facial emotion analysis ', test_img)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
+            break
         continue
 
     stress_value = 0
-    for detection in dlib_detections:
-        shape = dlib_predictor(test_img, detection)
+    if len(all_faces) > 0:
+        face = all_faces[0]
+        # cv2.rectangle(test_img, (x, y), (x + w, y + h), (254, 89, 194), 2)
+        # cropped_img = test_img[y - 50:y + h + 50, x - 50:x + w + 50]
+        # cv2.imshow('cropped image', cropped_img)
+
+        (lBegin, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eyebrow"]
+        (rBegin, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eyebrow"]
+        shape = dlib_predictor(test_img, face)
         for i in range(1, 68):  # There are 68 landmark points on each face
             # For each point, draw a red circle with thickness 1 on the original frame
-            cv2.circle(test_img, (shape.part(i).x, shape.part(i).y), 1, (0, 255, 0), thickness=2)
-
+            cv2.circle(test_img, (shape.part(i).x, shape.part(i).y), 1, secondary_color, thickness=2)
         shape = face_utils.shape_to_np(shape)
         leyebrow = shape[lBegin:lEnd]
         reyebrow = shape[rBegin:rEnd]
@@ -111,32 +131,39 @@ while True:
         reyebrowhull = cv2.convexHull(reyebrow)
         leyebrowhull = cv2.convexHull(leyebrow)
 
-        cv2.drawContours(test_img, [reyebrowhull], -1, (0, 255, 0), 1)
-        cv2.drawContours(test_img, [leyebrowhull], -1, (0, 255, 0), 1)
+        cv2.drawContours(test_img, [reyebrowhull], -1, secondary_color, 1)
+        cv2.drawContours(test_img, [leyebrowhull], -1, secondary_color, 1)
 
         distq = eye_brow_distance(leyebrow[-1], reyebrow[0])
-        stress_value, stress_label = normalize_values(dlib_points, distq)
+        stress_value = normalize_values(dlib_points, distq)
 
+    detector.detect_emotions(test_img)
     if len(detector.emotions) > 0:
-        image = cv2.rectangle(test_img,
-                              (detector.emotions[0]['box'][0], detector.emotions[0]['box'][1]),
-                              (detector.emotions[0]['box'][0] + detector.emotions[0]['box'][2],
-                               detector.emotions[0]['box'][1] + detector.emotions[0]['box'][3]),
-                              (254, 89, 194),
-                              2)
-        font = cv2.FONT_HERSHEY_SIMPLEX
-
+        cv2.rectangle(test_img,
+                      (detector.emotions[0]['box'][0], detector.emotions[0]['box'][1]),
+                      (detector.emotions[0]['box'][0] + detector.emotions[0]['box'][2],
+                       detector.emotions[0]['box'][1] + detector.emotions[0]['box'][3]),
+                      main_color,
+                      2)
+        stress_level = ((stress_value + detector.emotions[0]['emotions']['sad'] + detector.emotions[0]['emotions'][
+                'angry'] + detector.emotions[0]['emotions']['fear'] + detector.emotions[0]['emotions'][
+                      'disgust']) / 5)
         for i, emotion in enumerate(detector.emotions[0]['emotions']):
             cv2.putText(test_img,
                         f"{emotion}: {detector.emotions[0]['emotions'][emotion]}",
-                        (detector.emotions[0]['box'][0], detector.emotions[0]['box'][1] - i*15 - 25), font, 0.5, (254, 89, 194), 1)
+                        (detector.emotions[0]['box'][0], detector.emotions[0]['box'][1] - i*15 - 25), font,
+                        0.5, main_color, 1)
+            cv2.putText(test_img, f"stress: {round(stress_level,2)}", (detector.emotions[0]['box'][0], (detector.emotions[0]['box'][1]+detector.emotions[0]['box'][3]) + 25), font,
+                        0.5, main_color, 1)
             data_dict["development"][f"{emotion}_timeline"].append(int(detector.emotions[0]['emotions'][emotion] * 100))
         data_dict["development"]["stress_timeline"].append(
-            int(((stress_value+detector.emotions[0]['emotions']['sad']+detector.emotions[0]['emotions']['angry']+detector.emotions[0]['emotions']['fear']+detector.emotions[0]['emotions']['disgust'])/5) * 100)
+            int(((stress_value + detector.emotions[0]['emotions']['sad'] + detector.emotions[0]['emotions'][
+                'angry'] + detector.emotions[0]['emotions']['fear'] + detector.emotions[0]['emotions'][
+                      'disgust']) / 5) * 100)
         )
 
-    resized_img = cv2.resize(test_img, (1000, 700))
-    cv2.imshow('Facial emotion analysis ', resized_img)
+    # resized_img = cv2.resize(test_img, (1000, 700))
+    cv2.imshow('Facial emotion analysis ', test_img)
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
         break
