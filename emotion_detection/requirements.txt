@@ -13,3 +13,4 @@ imutils
 sklearn
 cv2
 dlib
+matplotlib
