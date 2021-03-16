@@ -102,7 +102,7 @@ data_dict = {
     "session_date": date.today().strftime("%d/%m/%Y"),
     "session_time": datetime.now().strftime("%H:%M:%S"),
     "data": {
-
+        "timeline": []
     },
     "development": {
         "safe_driving": [],
@@ -149,7 +149,7 @@ else:
 
 current_frame = 0
 frame_rate = 30
-capture_interval = 10  # Average values over 10 second intervals, at 30 fps
+capture_interval = 5  # 5 second intervals, at 30 fps
 
 # Continuously capture images from the webcam and analyze the images.
 while True:
@@ -165,7 +165,7 @@ while True:
     test_img_predict = np.reshape(test_img_resized,
                                   [1, 128, 128, 3])  # 128 by 128 dimension, 3 because 3 channel rgb for color
     img_arr_predict = np.round(model.predict(test_img_predict, batch_size=1), 2)
-    print(img_arr_predict)
+    # print(img_arr_predict)
     max_val = np.argmax(img_arr_predict)
     if max_val < 0.7:
         label = "N/A"
@@ -198,6 +198,22 @@ for i, item in enumerate(data_dict["development"]):
 
 for gesture_type in classes:
     print(f"""{gesture_type} detections: {data_dict['development'][f'{gesture_type}'].count(1)}""")
+
+
+# Record in JSON file the data captured in intervals so there aren't too many data points per minute.
+# capture interval of 5 at 30fps = 1 data point every 150 frames, which is 12 data points a minute.
+# This is usually low, but for gestures this should be okay.
+for i in range(current_frame):
+    if i % (frame_rate*capture_interval) == 0:
+        added_data = False
+        for gesture_type in classes:
+            if data_dict['development'][f'{gesture_type}'][i] == 1:
+                data_dict['data']['timeline'].append(classes.index(gesture_type))
+                added_data = True
+        if not added_data:
+            data_dict['data']['timeline'].append(-1)
+# Example output:
+# timeline: [-1, -1, -1, 0, 0, 1, 1, 5, 5, -1, -1, 0, ...]
 
 with open('gesture_result.json', 'w') as json_file:
     json.dump(data_dict, json_file)
