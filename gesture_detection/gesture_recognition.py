@@ -1,11 +1,10 @@
-import tensorflow as tf
 import numpy as np
 from tensorflow import keras
-from tensorflow.keras import layers
 import cv2
 from datetime import datetime, date
 import matplotlib.pyplot as plt
 import json
+import sys
 
 
 def get_model():
@@ -130,15 +129,24 @@ def output_label(predict):
 
 
 # Prompt for IP camera or regular webcam (This is just for testing because I'm using a RaspberryPi as an IP camera)
-input_setting = input("Enter one of the option numbers [1 for IP camera, 2 for Webcam, 3 for Video File]: ")
+input_setting = input("Enter one of the option numbers [1 for IP camera, 2 for Webcam, 3 for Video File, 4 for Image]: ")
 if input_setting == "1":
-    vid_src = "http://jjraspi:9090/?action=stream"
+    cap = cv2.VideoCapture("http://jjraspi:9090/?action=stream")
 elif input_setting == "2":
-    vid_src = 0
+    cap = cv2.VideoCapture(0)
+elif input_setting == "3":
+    src = input("Enter the video file name to use (example: myvideo.avi): ")
+    cap = cv2.VideoCapture(src)
 else:
-    vid_src = input("Enter the video file name to use (example: myvideo.avi): ")
-# Start capturing the video feed
-cap = cv2.VideoCapture(vid_src)
+    src = input("Enter the image file name to use (example: img1.png): ")
+    cap = cv2.imread(src)
+    img_cv_r = cv2.resize(cap, (128, 128))
+    img_cv_predict = np.reshape(img_cv_r, [1, 128, 128, 3])
+    arr_predict = np.round(model.predict(img_cv_predict, batch_size=1), 2)
+    print(arr_predict)
+    print(output_label(np.argmax(arr_predict)))
+    sys.exit(0)
+
 current_frame = 0
 frame_rate = 30
 capture_interval = 10  # Average values over 10 second intervals, at 30 fps
@@ -156,11 +164,16 @@ while True:
     # Make a gesture prediction and display it to the screen.
     test_img_predict = np.reshape(test_img_resized,
                                   [1, 128, 128, 3])  # 128 by 128 dimension, 3 because 3 channel rgb for color
-    img_arr_predict = model.predict(test_img_predict, batch_size=1)
-    label = output_label(np.argmax(img_arr_predict))
+    img_arr_predict = np.round(model.predict(test_img_predict, batch_size=1), 2)
+    print(img_arr_predict)
+    max_val = np.argmax(img_arr_predict)
+    if max_val < 0.7:
+        label = "N/A"
+    else:
+        label = output_label(np.argmax(img_arr_predict))
     cv2.putText(test_img,
                 f"Detected Gesture: {label}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (254, 89, 194), 2)
+                (0, 255, 0), 2)
     # Add the detected gesture into the timeline.
     for gesture_type in classes:
         if gesture_type == label:
