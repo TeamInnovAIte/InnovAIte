@@ -9,12 +9,15 @@ from imutils import face_utils
 from datetime import datetime, date
 import matplotlib.pyplot as plt
 
-useIPCamera = input("Use IP camera? [Y/N]")
-if useIPCamera in ["Y", "y"]:
-    cam_url = "http://jjraspi:9090/?action=stream"
+# Prompt for IP camera or regular webcam (This is just for testing because I'm using a RaspberryPi as an IP camera)
+input_setting = input("Enter one of the option numbers [1 for IP camera, 2 for Webcam, 3 for Video File]: ")
+if input_setting == "1":
+    vid_src = "http://jjraspi:9090/?action=stream"
+elif input_setting == "2":
+    vid_src = 0
 else:
-    cam_url = 0
-cap = cv2.VideoCapture(cam_url)
+    vid_src = input("Enter the video file name to use (example: myvideo.avi): ")
+cap = cv2.VideoCapture(vid_src)
 detector = FER(mtcnn=True)
 dlib_detector = dlib.get_frontal_face_detector()
 dlib_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
@@ -157,7 +160,7 @@ for cur_emotion in ["angry", "disgust", "fear", "happy", "sad", "surprise", "neu
     data_dict["data"][f"overall_{cur_emotion}"] = round(total_emotion / len(data_dict["development"][f"{cur_emotion}_timeline"]), 2)
 
 print(data_dict["development"]["stress_timeline"])
-with open('result.json', 'w') as json_file:
+with open('emotion_result.json', 'w') as json_file:
     json.dump(data_dict, json_file)
 
 fig, (ax1, ax2) = plt.subplots(2)
