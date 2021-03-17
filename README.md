@@ -5,6 +5,9 @@ DriveAID aims to provide parents with a method of monitoring their teens driving
 <img src="https://user-images.githubusercontent.com/20238115/111500082-fb996b80-8719-11eb-9271-778065ac2b67.png" alt="DriveAID Project Logo"/>
 </p>
 
+### Demo
+[Emotion And Gesture Recognition Demo](https://www.youtube.com/watch?v=2JThDjU4U14)
+
 
 ### Licenses
 [Library - FER](https://github.com/justinshenk/fer/blob/master/LICENSE)
