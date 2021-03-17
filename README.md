@@ -1,6 +1,6 @@
 ## DriveAID
 DriveAID is a review/learning tool to help teen drivers improve their driving ability especially since covid-19 has had a significant impact in the education of new drivers.<br>
-DriveAID aims to provide parents with a method of monitoring their teens driving ability through a concensual learning process by both the teen and parent to identify potential issues in their teen's driving.<br>
+DriveAID aims to provide parents with a method of monitoring their teens driving ability through a concensual process in which both the teen and parent can review emotional and gesture data from a driving session to identify potential issues in their teen's driving.<br>
 <p align="center">
 <img src="https://user-images.githubusercontent.com/20238115/111413081-f86b9480-86b3-11eb-81cb-f720a71f3bf9.png" alt="DriveAID Project Logo"/>
 </p>
