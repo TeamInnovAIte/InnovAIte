@@ -14,9 +14,9 @@ DriveAID aims to provide parents with a method of monitoring their teens driving
 - The logo for our project utilizes custom modified icons from the Google Material Design Icons library. This change has been listed here as per the Apache 2.0 licensing agreement of the library.
 
 ### References
-[GitHub - Geek-ubaid/Stress-Detection](https://github.com/Geek-ubaid/Stress-Detection)
+[GitHub - Geek-ubaid/Stress-Detection](https://github.com/Geek-ubaid/Stress-Detection)<br>
 [CNN Based Face Detector From DLIB](https://towardsdatascience.com/cnn-based-face-detector-from-dlib-c3696195e01c
-)
-[Face Detection Using OpenCV](https://towardsdatascience.com/face-detection-in-2-minutes-using-opencv-python-90f89d7c0f81)
-[CNN State Farm Distracted Driver Detection Notebook](https://www.kaggle.com/anayantzinp/cnn-state-farm-distracted-driver-detection)
+)<br>
+[Face Detection Using OpenCV](https://towardsdatascience.com/face-detection-in-2-minutes-using-opencv-python-90f89d7c0f81)<br>
+[CNN State Farm Distracted Driver Detection Notebook](https://www.kaggle.com/anayantzinp/cnn-state-farm-distracted-driver-detection)<br>
 [CNN State Farm Distracted Driver Detection Dataset](https://www.kaggle.com/c/state-farm-distracted-driver-detection/overview)
