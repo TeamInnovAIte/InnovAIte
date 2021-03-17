@@ -105,16 +105,40 @@ data_dict = {
     "session_date": session_date,
     "gesture_data": {
         "timeline": [],
-        "development": {
-            "safe_driving": [],
-            "texting": [],
-            "talking_on_phone": [],
-            "operating_center_console": [],
-            "drinking": [],
-            "reaching_behind": [],
-            "hair_makeup": [],
-            "talking_to_passenger": []
-        }
+        "development": [
+            {
+                "name": "safe_driving",
+                "data": []
+            },
+            {
+                "name": "texting",
+                "data": []
+            },
+            {
+                "name": "talking_on_phone",
+                "data": []
+            },
+            {
+                "name": "operating_center_console",
+                "data": []
+            },
+            {
+                "name": "drinking",
+                "data": []
+            },
+            {
+                "name": "reaching_behind",
+                "data": []
+            },
+            {
+                "name": "hair_makeup",
+                "data": []
+            },
+            {
+                "name": "talking_to_passenger",
+                "data": []
+            }
+        ]
     }
 }
 
@@ -177,11 +201,11 @@ while True:
                 f"Detected Gesture: {label}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1,
                 (0, 255, 0), 2)
     # Add the detected gesture into the timeline.
-    for gesture_type in classes:
-        if gesture_type == label:
-            data_dict["gesture_data"]["development"][f"{label}"].append(1)
+    for i, gesture_item in enumerate(data_dict["gesture_data"]["development"]):
+        if data_dict["gesture_data"]["development"][i]["name"] == label:
+            data_dict["gesture_data"]["development"][i]["data"].append(1)
         else:
-            data_dict["gesture_data"]["development"][f"{gesture_type}"].append(0)
+            data_dict["gesture_data"]["development"][i]["data"].append(0)
 
     cv2.imshow('Gesture Analysis', test_img)
     key = cv2.waitKey(1) & 0xFF
@@ -197,10 +221,10 @@ intervals_total = (current_frame / (frame_rate*capture_interval))
 print(f"total captured frames: {current_frame}")
 print(f"total captured intervals: {intervals_total}")
 for i, item in enumerate(data_dict["gesture_data"]["development"]):
-    print(f"{item} total data points: {len(data_dict['gesture_data']['development'][item])}")
+    print(f"{data_dict['gesture_data']['development'][i]['name']} total data points: {len(data_dict['gesture_data']['development'][i]['data'])}")
 
-for gesture_type in classes:
-    print(f"""{gesture_type} detections: {data_dict['gesture_data']['development'][f'{gesture_type}'].count(1)}""")
+for i, item in enumerate(data_dict["gesture_data"]["development"]):
+    print(f"""{data_dict['gesture_data']['development'][i]['name']} detections: {data_dict['gesture_data']['development'][i]['data'].count(1)}""")
 
 
 # Record in JSON file the data captured in intervals so there aren't too many data points per minute.
@@ -209,9 +233,9 @@ for gesture_type in classes:
 for i in range(current_frame):
     if i % (frame_rate*capture_interval) == 0:
         added_data = False
-        for gesture_type in classes:
-            if data_dict['gesture_data']['development'][f'{gesture_type}'][i] == 1:
-                data_dict['gesture_data']['timeline'].append(classes.index(gesture_type))
+        for x, item in enumerate(data_dict["gesture_data"]["development"]):
+            if data_dict['gesture_data']['development'][x]['data'][i] == 1:
+                data_dict['gesture_data']['timeline'].append(classes.index(data_dict['gesture_data']['development'][x]['name']))
                 added_data = True
         if not added_data:
             data_dict['gesture_data']['timeline'].append(-1)
@@ -232,8 +256,8 @@ else:
 
 class_counts = [i for i, _ in enumerate(classes)]
 gesture_counts = []
-for gesture_type in classes:
-    gesture_counts.append(data_dict['gesture_data']['development'][f'{gesture_type}'].count(1))
+for i, item in enumerate(data_dict["gesture_data"]["development"]):
+    gesture_counts.append(data_dict['gesture_data']['development'][i]['data'].count(1))
 
 plt.style.use('ggplot')
 plt.bar(class_counts, gesture_counts, color='blue')
