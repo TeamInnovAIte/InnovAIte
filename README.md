@@ -19,5 +19,5 @@ DriveAID aims to provide parents with a method of monitoring their teens driving
 )<br>
 [Face Detection Using OpenCV](https://towardsdatascience.com/face-detection-in-2-minutes-using-opencv-python-90f89d7c0f81)<br>
 [CNN State Farm Distracted Driver Detection Notebook](https://www.kaggle.com/anayantzinp/cnn-state-farm-distracted-driver-detection)<br>
-[CNN State Farm Distracted Driver Detection Dataset](https://www.kaggle.com/c/state-farm-distracted-driver-detection/overview)
+[CNN State Farm Distracted Driver Detection Dataset](https://www.kaggle.com/c/state-farm-distracted-driver-detection/overview)<br>
 [Affectiva In-Cabin Sensing For Teen Driver Safety](https://blog.affectiva.com/how-in-cabin-sensing-helps-teen-drivers-stay-safe)
