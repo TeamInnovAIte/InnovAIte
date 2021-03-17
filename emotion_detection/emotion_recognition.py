@@ -52,16 +52,40 @@ data_dict = {
         "avg_neutral_timeline": [],
         "avg_surprise_timeline": [],
         "avg_sad_timeline": [],
-        "development": {
-            "stress_timeline": [],
-            "happy_timeline": [],
-            "fear_timeline": [],
-            "angry_timeline": [],
-            "disgust_timeline": [],
-            "neutral_timeline": [],
-            "surprise_timeline": [],
-            "sad_timeline": []
-        }
+        "development": [
+            {
+                "name": "stress",
+                "data": []
+            },
+            {
+                "name": "happy",
+                "data": []
+            },
+            {
+                "name": "fear",
+                "data": []
+            },
+            {
+                "name": "angry",
+                "data": []
+            },
+            {
+                "name": "disgust",
+                "data": []
+            },
+            {
+                "name": "neutral",
+                "data": []
+            },
+            {
+                "name": "surprise",
+                "data": []
+            },
+            {
+                "name": "sad",
+                "data": []
+            }
+        ]
     }
 }
 
@@ -141,13 +165,15 @@ while True:
                         0.5, main_color, 1)
             cv2.putText(test_img, f"stress: {round(stress_level,2)}", (detector.emotions[0]['box'][0], (detector.emotions[0]['box'][1]+detector.emotions[0]['box'][3]) + 25), font,
                         0.5, main_color, 1)
-            data_dict["emotion_data"]["development"][f"{emotion}_timeline"].append(int(detector.emotions[0]['emotions'][emotion] * 100))
-        data_dict["emotion_data"]["development"]["stress_timeline"].append(
+            for x, emotion_item in enumerate(data_dict["emotion_data"]["development"]):
+                if data_dict["emotion_data"]["development"][x]["name"] == emotion:
+                    data_dict["emotion_data"]["development"][x]["data"].append(int(detector.emotions[0]['emotions'][emotion] * 100))
+        data_dict["emotion_data"]["development"][0]["data"].append(
             int(stress_level * 100)
         )
     else:
-        for i, item in enumerate(data_dict["emotion_data"]["development"]):
-            data_dict["emotion_data"]["development"][item].append(-1)
+        for x, item in enumerate(data_dict["emotion_data"]["development"]):
+            data_dict["emotion_data"]["development"][x]["data"].append(-1)
         cv2.putText(test_img, f"No detection", (5, 25), font,
                     0.5, main_color, 1)
 
@@ -166,23 +192,23 @@ intervals_total = (current_frame / (frame_rate*capture_interval))
 print(f"total frames: {total_frames}")
 print(f"total captured frames: {current_frame}")
 print(f"total captured intervals: {intervals_total}")
-for i, item in enumerate(data_dict["emotion_data"]["development"]):
-    print(f"total data points: {len(data_dict['emotion_data']['development'][item])}")
+for x, item in enumerate(data_dict["emotion_data"]["development"]):
+    print(f"total data points: {len(data_dict['emotion_data']['development'][x]['data'])}")
 
-for cur_emotion in ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral", "stress"]:
+for x, cur_emotion in enumerate(data_dict["emotion_data"]["development"]):
     total_emotion = 0
     frames_of_no_emotion = 0
-    for i in range(len(data_dict["emotion_data"]["development"][f"{cur_emotion}_timeline"])):
-        if data_dict["emotion_data"]["development"][f"{cur_emotion}_timeline"][i] != -1:
-            total_emotion += data_dict["emotion_data"]["development"][f"{cur_emotion}_timeline"][i]
+    for i in range(len(data_dict["emotion_data"]["development"][x][f"data"])):
+        if data_dict["emotion_data"]["development"][x]["data"][i] != -1:
+            total_emotion += data_dict["emotion_data"]["development"][x]["data"][i]
         else:
             frames_of_no_emotion += 1
         if i % (frame_rate*capture_interval) == 0 and i != 0:
-            data_dict["emotion_data"][f"avg_{cur_emotion}_timeline"].append(round(total_emotion/(i-frames_of_no_emotion), 2))
+            data_dict["emotion_data"][f"avg_{data_dict['emotion_data']['development'][x]['name']}_timeline"].append(round(total_emotion/(i-frames_of_no_emotion), 2))
             frames_of_no_emotion = 0
-    data_dict["emotion_data"][f"overall_{cur_emotion}"] = round(total_emotion / (len(data_dict["emotion_data"]["development"][f"{cur_emotion}_timeline"])-data_dict["emotion_data"]["development"][f"{cur_emotion}_timeline"].count(-1)), 2)
+    data_dict["emotion_data"][f"overall_{data_dict['emotion_data']['development'][x]['name']}"] = round(total_emotion / (len(data_dict["emotion_data"]["development"][x]["data"])-data_dict["emotion_data"]["development"][x]["data"].count(-1)), 2)
 
-print(data_dict["emotion_data"]["development"]["stress_timeline"])
+print(data_dict["emotion_data"]["development"][0]["data"])
 if not os.path.exists("emotion_result.json"):
     with open('emotion_result.json', 'w') as json_file:
         json.dump({"sessions": [data_dict]}, json_file)
@@ -199,7 +225,7 @@ ax1.plot(range(len(data_dict["emotion_data"]["avg_stress_timeline"])), data_dict
 ax1.set(xlabel=f"Session Duration ({capture_interval} second intervals)", ylabel="Avg. Stress Levels")
 ax1.set_title(f"Stress Level Analysis Over Session Time")
 
-ax2.plot(range(len(data_dict["emotion_data"]["development"]["stress_timeline"])), data_dict["emotion_data"]["development"]["stress_timeline"])
+ax2.plot(range(len(data_dict["emotion_data"]["development"][0]["data"])), data_dict["emotion_data"]["development"][0]["data"])
 ax2.set(xlabel="Session Duration (frames)", ylabel="Stress Levels")
 ax2.set_title("Stress Level Analysis Over Session Time (in Frames)")
 
