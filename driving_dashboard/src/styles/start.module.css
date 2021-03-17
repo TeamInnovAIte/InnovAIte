@@ -1,0 +1,21 @@
+.startPage {
+  background-image: url("../images/StartImg.png");
+  background-size: cover;
+  background-position-x: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.startButton {
+  width: 50vw;
+  height: 10vh;
+  background-color: lightgray;
+  color: black;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: xx-large;
+  margin-top: 64vh;
+}

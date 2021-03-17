@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: lightseagreen;
+} /* Remove body margins */
+
+.pageStyle {
+  background-color: #006772;
+  height: 100vh;
+}
+
+.mainTitle {
+  text-align: left;
+  width: 100%;
+  padding: 1%;
+  background-color: #006772;
+  color: lightgrey;
+  font-size: 32pt;
+  align-items: center;
+  display: flex;
+}
+
+.imageSize {
+  width: 5%;
+}
+
+.weekLabel {
+  padding: 1%;
+  background-color: lightgrey;
+}
+
+.buttonRow {
+  justify-content: space-evenly;
+  background-color: gray;
+  display: flex;
+}
+
+.buttonWrapper {
+  width: 15%;
+  background-color: orange;
+  border-color: lightseagreen;
+  text-align: center;
+  align-self: center;
+  padding: 1%;
+  border-width: 1px;
+}
+
+.backButton {
+  width: 3%;
+  background-color: orange;
+  border-color: lightseagreen;
+  text-align: center;
+  align-self: center;
+  padding: 1%;
+  border-width: 1px;
+}
+
+.forwardButton {
+  width: 3%;
+  background-color: orange;
+  border-color: lightseagreen;
+  text-align: center;
+  align-self: center;
+  padding: 1%;
+  border-width: 1px;
+}
+
+.mainPlot {
+  width: 100%;
+  height: 60vh;
+  padding: 10px;
+  background-color: #00abbf;
+}
