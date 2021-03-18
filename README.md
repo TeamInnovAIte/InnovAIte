@@ -9,6 +9,13 @@ DriveAID aims to provide parents with a method of monitoring their teens driving
 [Emotion And Gesture Recognition Demo](https://www.youtube.com/watch?v=2JThDjU4U14)
 
 
+### Requirements
+Each detection model folder contains a `requirements.txt` file. Please install the dependencies inside using `pip`<br>
+```
+pip install -R emotion_detection/requirements.txt
+pip install -R gesture_detection/requirements.txt
+```
+
 ### Licenses
 [Library - FER](https://github.com/justinshenk/fer/blob/master/LICENSE)
 - This project utilizes the FER (facial emotion recognition) library's CNN facial detection model. The usage of this library has been listed here as per the MIT licensing agreement.
