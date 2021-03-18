@@ -9,7 +9,7 @@ DriveAID aims to provide parents with a method of monitoring their teens driving
 [Emotion And Gesture Recognition Demo](https://www.youtube.com/watch?v=2JThDjU4U14)
 
 ### Presentation
-[Makeathon Presentation(https://github.com/TeamInnovAIte/InnovAIte/blob/main/TeamInnovAIte%20-%20Makeathon%20Presentation.pptx)
+[Makeathon Presentation](https://github.com/TeamInnovAIte/InnovAIte/blob/main/TeamInnovAIte%20-%20Makeathon%20Presentation.pptx)
 
 
 ### Requirements
