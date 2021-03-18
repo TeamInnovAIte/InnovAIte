@@ -15,6 +15,7 @@ Each detection model folder contains a `requirements.txt` file. Please install t
 pip install -R emotion_detection/requirements.txt
 pip install -R gesture_detection/requirements.txt
 ```
+The dashboard demo requirements can be found in the `package.json` file.
 
 ### Licenses
 [Library - FER](https://github.com/justinshenk/fer/blob/master/LICENSE)
