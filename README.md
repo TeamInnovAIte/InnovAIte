@@ -17,6 +17,11 @@ pip install -R gesture_detection/requirements.txt
 ```
 The dashboard demo requirements can be found in the `package.json` file.
 
+
+### Additional Datasets
+[Dlib Shape Predictor 68 Face Landmarks](https://github.com/davisking/dlib-models/blob/master/shape_predictor_68_face_landmarks.dat.bz2)
+
+
 ### Licenses
 [Library - FER](https://github.com/justinshenk/fer/blob/master/LICENSE)
 - This project utilizes the FER (facial emotion recognition) library's CNN facial detection model. The usage of this library has been listed here as per the MIT licensing agreement.
